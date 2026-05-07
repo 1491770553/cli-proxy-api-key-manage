@@ -444,7 +444,7 @@ function renderCopyTemplates() {
     var preview = tpl.content.replace(/{apikey}/g, "xxx").substring(0, 100) + "...";
     html += '<div class="copy-style-option" onclick="doCopyStyle(' + idx + ')">';
     html += '<div class="copy-style-title">' + tpl.name + '</div>';
-    html += '<div class="copy-style-preview">' + preview.replace(/\\n/g, "\\\\n") + '</div>';
+    html += '<div class="copy-style-preview">' + preview + '</div>';
     html += '</div>';
   });
   list.innerHTML = html;
