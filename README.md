@@ -187,7 +187,7 @@ cli-proxy-api-key-manage/
 - 操作按钮：复制、编辑、删除
 
 **复制功能**
-- 样式1（简洁）：`key：xxx\n\nBase：http://...`
+- 样式1（简洁）：`key：xxx\n\nBase：http://your-api-server:port`
 - 样式2（完整）：包含使用说明、模型列表、售后条款
 
 **编辑弹窗**
@@ -230,7 +230,7 @@ CLI Proxy API Key Manager 是一个独立的管理面板，用于生成和管理
 ```
 ┌─────────────────────────┐
 │  CLI Proxy API 服务      │
-│  (42.193.140.242:8317)  │
+│  (端口: 8317)            │
 │                         │
 │  验证 API Key 有效性      │
 │  检查过期时间             │
@@ -240,7 +240,7 @@ CLI Proxy API Key Manager 是一个独立的管理面板，用于生成和管理
           ↓
 ┌─────────────────────────┐
 │  API Key Manager        │
-│  (42.193.140.242:18317) │
+│  (端口: 18317)          │
 │                         │
 │  管理面板：创建/编辑/删除  │
 │  存储：config.yaml      │
@@ -323,6 +323,6 @@ python manager.py
 
 ## 访问地址
 
-启动后访问：`http://服务器IP:18317`
+启动后访问：`http://localhost:18317`
 
 默认密码：`wlie0726`
