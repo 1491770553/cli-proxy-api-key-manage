@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Key 管理 - 登录</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(135deg,#0c0c1e 0%,#1a1a3e 50%,#2d1b4e 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+#particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.login-box{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:50px;border-radius:24px;box-shadow:0 25px 70px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1);width:420px;max-width:90vw;animation:slideUp 0.6s cubic-bezier(0.16,1,0.3,1);border:1px solid rgba(255,255,255,0.15);position:relative;z-index:1;}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)}}
+.login-box h1{text-align:center;color:#fff;margin-bottom:10px;font-size:32px;font-weight:700;text-shadow:0 2px 20px rgba(0,0,0,0.3);}
+.login-box p{text-align:center;color:rgba(255,255,255,0.6);margin-bottom:35px;font-size:14px;letter-spacing:2px;}
+.login-box input{width:100%;padding:16px 20px;margin:12px 0;border:2px solid rgba(255,255,255,0.15);border-radius:12px;font-size:16px;transition:all 0.3s ease;outline:none;background:rgba(255,255,255,0.08);color:#fff;}
+.login-box input::placeholder{color:rgba(255,255,255,0.4);}
+.login-box input:focus{border-color:#7c3aed;box-shadow:0 0 0 4px rgba(124,58,237,0.2);background:rgba(255,255,255,0.12);}
+.login-box button{width:100%;padding:16px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:12px;font-size:18px;font-weight:600;cursor:pointer;margin-top:20px;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);box-shadow:0 4px 20px rgba(124,58,237,0.4);}
+.login-box button:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(124,58,237,0.6);}
+.login-box .remember-row{display:flex;align-items:center;margin-top:15px;}
+.login-box .remember-row label{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:14px;cursor:pointer;}
+.login-box .remember-row input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:#7c3aed;}
+.login-box .error{color:#ef4444;text-align:center;margin-top:15px;font-size:14px;animation:shake 0.5s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)}}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="login-box">
+<h1>API Key 管理</h1>
+<p>CLI PROXY API MANAGEMENT</p>
+<form method="POST" id="loginForm">
+<input type="password" name="password" id="passwordInput" placeholder="Enter password" required>
+<div class="remember-row">
+<label><input type="checkbox" id="rememberMe"> Remember password</label>
+</div>
+<button type="submit">Sign In</button>
+</form>
+{% if e %}<p class="error">Invalid password, please try again</p>{% endif %}
+</div>
+<script>
+!function(){const c=document.getElementById("particles-canvas");const ctx=c.getContext("2d");let w=window.innerWidth,h=window.innerHeight;c.width=w;c.height=h;const ps=[];for(let i=0;i<80;i++)ps.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+1,spd:Math.random()*0.5+0.2,s:Math.random()*9999});function an(){ctx.clearRect(0,0,w,h);ps.forEach(p=>{p.y+=p.spd;p.x+=Math.sin(p.s)*0.3;if(p.y>h)p.y=0;if(p.x>w)p.x=0;if(p.x<0)p.x=w;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,2*Math.PI);ctx.fillStyle="rgba(124,58,237,0.5)";ctx.fill();});requestAnimationFrame(an);}window.addEventListener("resize",()=>{w=window.innerWidth;h=window.innerHeight;c.width=w;c.height=h;});an();}();
+if(localStorage.getItem("apikey_manager_pwd")){document.getElementById("passwordInput").value=localStorage.getItem("apikey_manager_pwd");if(localStorage.getItem("apikey_manager_remember")==="1"){document.getElementById("rememberMe").checked=true;document.getElementById("loginForm").submit();}}
+document.getElementById("loginForm").onsubmit=function(){if(document.getElementById("rememberMe").checked){localStorage.setItem("apikey_manager_pwd",document.getElementById("passwordInput").value);localStorage.setItem("apikey_manager_remember","1");}else{localStorage.removeItem("apikey_manager_pwd");localStorage.removeItem("apikey_manager_remember");}};
+</script>
+</body>
+</html>
