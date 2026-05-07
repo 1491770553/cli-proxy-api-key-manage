@@ -17,12 +17,13 @@ API Key 管理系统，用于管理 CLI Proxy API 的访问凭证。
 
 ```
 cli-proxy-api-key-manage/
-├── manager.py          # 主程序（Flask 应用）
-├── config.yaml         # 配置文件
-├── recycle.json        # 回收站数据
+├── manager.py              # 主程序（Flask 应用）
+├── config.yaml             # 配置文件
+├── recycle.json            # 回收站数据
+├── apikey-manager.service  # systemd 服务文件（可选）
 ├── templates/
-│   ├── login.html      # 登录页面
-│   └── index.html     # 主页面
+│   ├── login.html          # 登录页面
+│   └── index.html          # 主页面
 └── README.md
 ```
 
@@ -210,6 +211,95 @@ keys:                         # API Keys 列表
     expires_at: 2026-06-07T10:00:00
 ```
 
+## 启动方式
+
+```bash
+# 直接运行
+python manager.py
+
+# 或后台运行
+nohup python manager.py &
+```
+
+## 如何与 CLI Proxy API 集成
+
+CLI Proxy API Key Manager 是一个独立的管理面板，用于生成和管理 API Key。实际使用时需要与 CLI Proxy API 服务配合。
+
+### 集成架构
+
+```
+┌─────────────────────────┐
+│  CLI Proxy API 服务      │
+│  (42.193.140.242:8317)  │
+│                         │
+│  验证 API Key 有效性      │
+│  检查过期时间             │
+└─────────┬───────────────┘
+          │
+          │ API Key 验证
+          ↓
+┌─────────────────────────┐
+│  API Key Manager        │
+│  (42.193.140.242:18317) │
+│                         │
+│  管理面板：创建/编辑/删除  │
+│  存储：config.yaml      │
+└─────────────────────────┘
+```
+
+### 集成步骤
+
+1. **部署 API Key Manager**
+
+   在服务器上部署 manager.py，配置好端口和密码。
+
+2. **配置 CLI Proxy API**
+
+   在 CLI Proxy API 的配置文件中指定 API Key Manager 的地址，以便验证 Key。
+
+3. **使用流程**
+
+   - 通过管理面板创建 API Key
+   - 将 Key 提供给用户
+   - 用户使用 Key 访问 CLI Proxy API
+   - CLI Proxy API 验证 Key 有效性和过期时间
+
+### 验证逻辑示例
+
+CLI Proxy API 收到请求时，需要验证：
+
+```python
+def verify_api_key(key):
+    # 1. 检查 Key 格式
+    if not key.startswith(('sk-', 'yk-', 'zk-')):
+        return False
+
+    # 2. 读取 config.yaml
+    config = yaml.load(open('config.yaml'))
+
+    # 3. 查找 Key
+    key_data = None
+    for k in config.get('keys', []):
+        if k['key'] == key:
+            key_data = k
+            break
+
+    if not key_data:
+        return False  # Key 不存在
+
+    # 4. 检查生效时间
+    if key_data.get('starts_at'):
+        if datetime.now() < parse_time(key_data['starts_at']):
+            return False  # 未生效
+
+    # 5. 检查过期时间
+    if key_data.get('expires_at'):
+        if datetime.now() > parse_time(key_data['expires_at']):
+            return False  # 已过期
+
+    return True
+```
+
 ## 安装部署
 
 ### 环境要求
@@ -229,30 +319,6 @@ pip install flask flask-cors pyyaml
 
 # 启动服务
 python manager.py
-
-# 或使用 systemd 服务（可选）
-cp apikey-manager.service /etc/systemd/system/
-systemctl enable apikey-manager
-systemctl start apikey-manager
-```
-
-### 服务管理
-
-```bash
-# 启动
-systemctl start apikey-manager
-
-# 停止
-systemctl stop apikey-manager
-
-# 重启
-systemctl restart apikey-manager
-
-# 查看状态
-systemctl status apikey-manager
-
-# 查看日志
-journalctl -u apikey-manager -f
 ```
 
 ## 访问地址
