@@ -200,9 +200,32 @@ cli-proxy-api-key-manage/
 
 ## 配置说明
 
+### manager.py 配置项
+
+```python
+PASSWORD = "wlie0726"         # 登录密码
+PORT = 18317                  # 服务端口
+
+# 复制模板配置
+COPY_TEMPLATES = [
+    {
+        "name": "样式1：简洁分享",
+        "content": "key：{apikey}\n\nBase：http://your-api-server:port"
+    },
+    {
+        "name": "样式2：完整说明",
+        "content": "key：{apikey}\n\nBase：http://your-api-server:port\n\n使用说明..."
+    }
+]
+```
+
+**模板变量**：使用 `{apikey}` 作为 API Key 的占位符，复制时会自动替换。
+
+### config.yaml 配置项
+
 ```yaml
-port: 18317                    # 服务端口
-password: wlie0726            # 登录密码
+port: 18317                    # 服务端口（与 manager.py 同步）
+password: wlie0726            # 登录密码（与 manager.py 同步）
 cleanup_interval: 300         # 自动清理间隔（秒，默认5分钟）
 keys:                         # API Keys 列表
   - key: sk-xxxxx
