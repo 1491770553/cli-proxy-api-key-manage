@@ -1,0 +1,14 @@
+[Unit]
+Description=API Key Manager for CLI Proxy API
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/apikey-manager
+ExecStart=/usr/bin/python3 /opt/apikey-manager/manager.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
